@@ -36,7 +36,7 @@ const createQuestionsTable = `
         question_date BIGINT,
         asker_name VARCHAR,
         asker_email VARCHAR,
-        question_reported INT,
+        question_reported BOOL,
         question_helpfulness INT
     );`;
 
@@ -48,7 +48,7 @@ const createAnswersTable = `
         answer_date BIGINT,
         answerer_name VARCHAR,
         answerer_email VARCHAR,
-        answer_reported INT,
+        answer_reported BOOL,
         answer_helpfulness INT
     );`;
 
@@ -70,23 +70,26 @@ const deleteAllTables = async () => executeQuery(deleteQuery('answer_photos'))
   .then(() => executeQuery(deleteQuery('questions')));
 
 // real csv: '/Users/ctunakan/SDC/questions.csv'
+// sample csv: '/Users/ctunakan/SDC/questionsSample.csv'
 const loadQuestions = `
     COPY questions 
-    FROM '/Users/ctunakan/SDC/questionsSample.csv'
+    FROM '/Users/ctunakan/SDC/questions.csv'
     DELIMITER ','
     CSV HEADER;
 `;
 // real csv: '/Users/ctunakan/SDC/answers.csv'
+// sample csv: '/Users/ctunakan/SDC/answerSample.csv'
 const loadAnswers = `
     COPY answers 
-    FROM '/Users/ctunakan/SDC/answerSample.csv'
+    FROM '/Users/ctunakan/SDC/answers.csv'
     DELIMITER ','
     CSV HEADER;
 `;
 // real csv: '/Users/ctunakan/SDC/answers_photos.csv'
+// sample csv: '/Users/ctunakan/SDC/answers_photosSample.csv'
 const loadPhotos = `
     COPY answer_photos 
-    FROM '/Users/ctunakan/SDC/answers_photosSample.csv'
+    FROM '/Users/ctunakan/SDC/answers_photos.csv'
     DELIMITER ','
     CSV HEADER;
 `;
