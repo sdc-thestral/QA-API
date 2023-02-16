@@ -4,7 +4,8 @@
   "description": "QA-API",
   "main": "index.js",
   "scripts": {
-    "test": "run jest"
+    "test": "run jest",
+    "server": "npx nodemon --watch server server/index.js"
   },
   "repository": {
     "type": "git",

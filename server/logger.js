@@ -1,4 +1,4 @@
 module.exports = (req, res, next) => {
-  console.log('method: ', req.method, 'params: ', req.params, 'at url: ', req.url);
+  console.log('method: ', req.method, 'query param: ', req.query, 'at url: ', req.url);
   next();
 };
