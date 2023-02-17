@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 // eslint-disable-next-line import/no-extraneous-dependencies
 require('dotenv').config();
 const express = require('express');
@@ -14,14 +15,22 @@ app.use(logger);
 app.use(express.json());
 
 app.get('/questions', (req, res) => {
-  dbQuery.getAllQuestions(1 /** add count and page params too */)
+  const productId = Number.parseInt(req.query.product_id);
+  const count = req.query.count ? req.query.count : null;
+  const page = req.query.page ? req.query.page : null;
+
+  dbQuery.getAllQuestions(productId, count, page)
     .then((data) => {
     //   console.log(data);
       res.send(data);
     });
 });
 app.get('/answers', (req, res) => {
-  dbQuery.getAllAnswers(1 /** add count and page params too */)
+  const questionId = Number.parseInt(req.query.question_id);
+  const count = req.query.count ? req.query.count : null;
+  const page = req.query.page ? req.query.page : null;
+
+  dbQuery.getAllAnswers(questionId, count, page)
     .then((data) => {
     //   console.log(data);
       res.send(data);
@@ -47,6 +56,34 @@ app.post('/addAnswer', (req, res) => {
 
   dbQuery.addAnswer(questionId, body, name, email, photoArr)
     .then(() => res.send('answer added!'));
+});
+
+app.put('/markQuestionHelpful', (req, res) => {
+  const questionId = req.query.question_id;
+
+  dbQuery.markQuestionHelpful(questionId)
+    .then(() => res.send('question marked helpful!'));
+});
+
+app.put('/markAnswerHelpful', (req, res) => {
+  const answerId = req.query.answer_id;
+
+  dbQuery.markAnswerHelpful(answerId)
+    .then(() => res.send('answer marked helpful!'));
+});
+
+app.put('/reportQuestion', (req, res) => {
+  const questionId = req.query.question_id;
+
+  dbQuery.reportQuestion(questionId)
+    .then(() => res.send('question reported!'));
+});
+
+app.put('/reportAnswer', (req, res) => {
+  const questionId = req.query.question_id;
+
+  dbQuery.reportAnswer(questionId)
+    .then(() => res.send('answer reported!'));
 });
 
 app.listen(process.env.PORT);
