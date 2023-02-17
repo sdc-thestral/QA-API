@@ -30,32 +30,32 @@ const executeQuery = async (query) => {
 
 const createQuestionsTable = `
     CREATE TABLE questions (
-        question_id INT PRIMARY KEY,
+        id INT PRIMARY KEY,
         product_id INT,
         question_body VARCHAR,
         question_date BIGINT,
         asker_name VARCHAR,
         asker_email VARCHAR,
-        question_reported BOOL,
-        question_helpfulness INT
+        question_reported BOOL DEFAULT false,
+        question_helpfulness INT DEFAULT 0
     );`;
 
 const createAnswersTable = `
     CREATE TABLE answers (
-        answer_id INT PRIMARY KEY,
-        question_id INT REFERENCES questions(question_id),
+        id INT PRIMARY KEY,
+        question_id INT REFERENCES questions(id),
         answer_body VARCHAR,
         answer_date BIGINT,
         answerer_name VARCHAR,
         answerer_email VARCHAR,
-        answer_reported BOOL,
-        answer_helpfulness INT
+        answer_reported BOOL DEFAULT false,
+        answer_helpfulness INT DEFAULT 0
     );`;
 
 const createPhotosTable = `
     CREATE TABLE answer_photos (
         photo_id INT PRIMARY KEY,
-        answer_id INT REFERENCES answers(answer_id),
+        answer_id INT REFERENCES answers(id),
         photo_url VARCHAR
     );`;
 
