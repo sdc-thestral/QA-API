@@ -54,7 +54,7 @@ const createAnswersTable = `
 
 const createPhotosTable = `
     CREATE TABLE answer_photos (
-        photo_id INT PRIMARY KEY,
+        id INT PRIMARY KEY,
         answer_id INT REFERENCES answers(id),
         photo_url VARCHAR
     );`;

@@ -44,11 +44,11 @@ const addAnswer = (questionId, body, name, email, photoArr) => {
     })
     .then((ansId) => {
       if (photoArr) {
-        db.query('SELECT photo_id FROM answer_photos ORDER BY photo_id DESC LIMIT 1')
+        db.query('SELECT id FROM answer_photos ORDER BY photo_id DESC LIMIT 1')
           .then((data) => {
             const photoId = data.rows[0].photo_id + 1;
             photoArr.forEach((photo, index) => {
-              db.query(`INSERT INTO answer_photos (photo_id, answer_id, photo_url) VALUES (${photoId + index}, ${ansId}, '${photo}');`);
+              db.query(`INSERT INTO answer_photos (id, answer_id, photo_url) VALUES (${photoId + index}, ${ansId}, '${photo}');`);
             });
           });
       }
