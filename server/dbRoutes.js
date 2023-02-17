@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 const db = require('./db');
 
 // assuming what we need to get question is in req.body, what would we pass to getQuestions
@@ -21,12 +22,8 @@ const addQuestion = (productId, body, name, email) => {
   const postTime = new Date();
   const formattedTime = postTime.valueOf();
 
-  return db.query('SELECT id FROM questions ORDER BY ID DESC LIMIT 1')
-    .then((data) => {
-      const questionId = data.rows[0].id + 1;
-      db.query(`INSERT INTO questions (id, product_id, question_body, question_date, asker_name, asker_email) 
-          VALUES (${questionId}, ${productId}, '${body}', ${formattedTime}, '${name}', '${email}');`);
-    })
+  return db.query(`INSERT INTO questions (product_id, question_body, question_date, asker_name, asker_email) 
+          VALUES (${productId}, '${body}', ${formattedTime}, '${name}', '${email}');`)
     .then((response) => response)
     .catch((err) => console.log(err));
 };
@@ -35,22 +32,15 @@ const addAnswer = (questionId, body, name, email, photoArr) => {
   const postTime = new Date();
   const formattedTime = postTime.valueOf();
 
-  return db.query('SELECT id FROM answers ORDER BY ID DESC LIMIT 1')
+  return db.query(`INSERT INTO answers (question_id, answer_body, answer_date, answerer_name, answerer_email) 
+        VALUES (${questionId}, '${body}', ${formattedTime}, '${name}', '${email}');`)
+    .then(() => db.query('SELECT MAX(id) FROM answers'))
     .then((data) => {
-      const answerId = data.rows[0].id + 1;
-      db.query(`INSERT INTO answers (id, question_id, answer_body, answer_date, answerer_name, answerer_email) 
-        VALUES (${answerId}, ${questionId}, '${body}', ${formattedTime}, '${name}', '${email}');`);
-      return answerId;
-    })
-    .then((ansId) => {
+      const ansId = Number.parseInt(data.rows[0].max);
       if (photoArr) {
-        db.query('SELECT id FROM answer_photos ORDER BY photo_id DESC LIMIT 1')
-          .then((data) => {
-            const photoId = data.rows[0].photo_id + 1;
-            photoArr.forEach((photo, index) => {
-              db.query(`INSERT INTO answer_photos (id, answer_id, photo_url) VALUES (${photoId + index}, ${ansId}, '${photo}');`);
-            });
-          });
+        photoArr.forEach((photo) => {
+          db.query(`INSERT INTO answer_photos (answer_id, photo_url) VALUES (${ansId}, '${photo}');`);
+        });
       }
     })
     .then((response) => response)
