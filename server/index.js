@@ -14,31 +14,62 @@ app.use(cors());
 app.use(logger);
 app.use(express.json());
 
-app.get('/questions', (req, res) => {
+// get questions
+app.get('/qa/questions', (req, res) => {
+  console.time('Execution Time Get Questions');
   const productId = Number.parseInt(req.query.product_id);
   const count = req.query.count ? req.query.count : null;
-  const page = req.query.page ? req.query.page : null;
 
-  dbQuery.getAllQuestions(productId, count, page)
+  dbQuery.getAllQuestions(productId, count)
     .then((data) => {
-    //   console.log(data);
+      // console.log(data);
       res.send(data);
-    });
+    // .then((resultObj) => {
+    //   const newResultObj = {};
+    //   newResultObj.product_id = req.query.product_id;
+    //   const addAnswer = resultObj.results.map((question) => {
+    //     const questionId = question.question_id;
+    //     const formattted = question;
+    //     return dbQuery.getAllAnswers(questionId)
+    //       .then((answerObj) => {
+    //         formattted.answers = answerObj;
+    //         return formattted;
+    //       })
+    //       .then((obj) => {
+    //         const arrayResults = Object.values(obj);
+    //         return arrayResults;
+    //       });
+    //   });
+    //   newResultObj.results = addAnswer;
+    //   console.log(newResultObj);
+    //   return newResultObj;
+    })
+    // .then((result) => res.send(result))
+    .then(() => console.timeEnd('Execution Time Get Questions'));
 });
-app.get('/answers', (req, res) => {
-  const questionId = Number.parseInt(req.query.question_id);
-  const count = req.query.count ? req.query.count : null;
-  const page = req.query.page ? req.query.page : null;
 
-  dbQuery.getAllAnswers(questionId, count, page)
+app.get('/qa/answers/:answer_id/photos', (req, res) => {
+  const answerId = Number.parseInt(req.params.answer_id);
+
+  dbQuery.getAnswerPhotos(answerId)
+    .then((data) => res.send(data));
+});
+
+// get answers
+app.get('/qa/questions/:question_id/answers', (req, res) => {
+  console.time('Execution Time Get Answers');
+  const questionId = Number.parseInt(req.params.question_id);
+
+  dbQuery.getAllAnswers(questionId)
     .then((data) => {
-    //   console.log(data);
       res.send(data);
-    });
+    })
+    .then(() => console.timeEnd('Execution Time Get Answers'));
 });
 
-app.post('/addQuestion', (req, res) => {
-  const productId = req.body.product_id;
+// add question
+app.post('/qa/questions', (req, res) => {
+  const productId = Number.parseInt(req.body.product_id);
   const body = req.body.question_body;
   const name = req.body.asker_name;
   const email = req.body.asker_email;
@@ -47,7 +78,8 @@ app.post('/addQuestion', (req, res) => {
     .then(() => res.send('question added!'));
 });
 
-app.post('/addAnswer', (req, res) => {
+// add answer
+app.post('/qa/questions/:question_id/answers', (req, res) => {
   const questionId = req.body.question_id;
   const body = req.body.answer_body;
   const name = req.body.answerer_name;
@@ -58,29 +90,33 @@ app.post('/addAnswer', (req, res) => {
     .then(() => res.send('answer added!'));
 });
 
-app.put('/markQuestionHelpful', (req, res) => {
-  const questionId = req.query.question_id;
+// mark question helpful
+app.put('/qa/questions/:question_id/helpful', (req, res) => {
+  const questionId = req.params.question_id;
 
   dbQuery.markQuestionHelpful(questionId)
     .then(() => res.send('question marked helpful!'));
 });
 
-app.put('/markAnswerHelpful', (req, res) => {
-  const answerId = req.query.answer_id;
+// mark answer helpful
+app.put('/qa/answers/:answer_id/helpful', (req, res) => {
+  const answerId = Number.parseInt(req.params.answer_id);
 
   dbQuery.markAnswerHelpful(answerId)
     .then(() => res.send('answer marked helpful!'));
 });
 
-app.put('/reportQuestion', (req, res) => {
-  const questionId = req.query.question_id;
+// reports question
+app.put('/qa/questions/:question_id/report', (req, res) => {
+  const questionId = req.params.question_id;
 
   dbQuery.reportQuestion(questionId)
     .then(() => res.send('question reported!'));
 });
 
-app.put('/reportAnswer', (req, res) => {
-  const questionId = req.query.question_id;
+// reports answer
+app.put('/qa/answers/:answer_id/report', (req, res) => {
+  const questionId = req.params.question_id;
 
   dbQuery.reportAnswer(questionId)
     .then(() => res.send('answer reported!'));

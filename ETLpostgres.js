@@ -30,7 +30,7 @@ const executeQuery = async (query) => {
 
 const createQuestionsTable = `
     CREATE TABLE questions (
-        id INT PRIMARY KEY,
+        question_id INT PRIMARY KEY,
         product_id INT,
         question_body VARCHAR,
         question_date BIGINT,
@@ -42,8 +42,8 @@ const createQuestionsTable = `
 
 const createAnswersTable = `
     CREATE TABLE answers (
-        id INT PRIMARY KEY,
-        question_id INT REFERENCES questions(id),
+        answer_id INT PRIMARY KEY,
+        question_id INT REFERENCES questions(question_id),
         answer_body VARCHAR,
         answer_date BIGINT,
         answerer_name VARCHAR,
@@ -54,8 +54,8 @@ const createAnswersTable = `
 
 const createPhotosTable = `
     CREATE TABLE answer_photos (
-        id INT PRIMARY KEY,
-        answer_id INT REFERENCES answers(id),
+        photo_id INT PRIMARY KEY,
+        answer_id INT REFERENCES answers(answer_id),
         photo_url VARCHAR
     );`;
 
