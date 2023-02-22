@@ -6,7 +6,7 @@ const express = require('express');
 const cors = require('cors');
 // const db = require('./db');
 const logger = require('./logger');
-const dbQuery = require('./dbRoutes');
+const dbQuery = require('./dbFiles/dbRoutes');
 
 const app = express();
 
@@ -21,30 +21,7 @@ app.get('/qa/questions', (req, res) => {
   const count = req.query.count ? req.query.count : null;
 
   dbQuery.getAllQuestions(productId, count)
-    .then((data) => {
-      // console.log(data);
-      res.send(data);
-    // .then((resultObj) => {
-    //   const newResultObj = {};
-    //   newResultObj.product_id = req.query.product_id;
-    //   const addAnswer = resultObj.results.map((question) => {
-    //     const questionId = question.question_id;
-    //     const formattted = question;
-    //     return dbQuery.getAllAnswers(questionId)
-    //       .then((answerObj) => {
-    //         formattted.answers = answerObj;
-    //         return formattted;
-    //       })
-    //       .then((obj) => {
-    //         const arrayResults = Object.values(obj);
-    //         return arrayResults;
-    //       });
-    //   });
-    //   newResultObj.results = addAnswer;
-    //   console.log(newResultObj);
-    //   return newResultObj;
-    })
-    // .then((result) => res.send(result))
+    .then((data) => res.send(data))
     .then(() => console.timeEnd('Execution Time Get Questions'));
 });
 
@@ -122,5 +99,6 @@ app.put('/qa/answers/:answer_id/report', (req, res) => {
     .then(() => res.send('answer reported!'));
 });
 
-app.listen(process.env.PORT);
-console.log(`Server listening at http://localhost:${process.env.PORT}`);
+module.exports = app;
+// app.listen(process.env.PORT);
+// console.log(`Server listening at http://localhost:${process.env.PORT}`);

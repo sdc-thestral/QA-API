@@ -34,13 +34,13 @@ const getAllAnswers = (questionId) => db.query(`SELECT *, ARRAY_AGG(photo_url) p
   .catch((err) => console.log(err));
 
 const getAllQuestions = (productId) => db.query(`SELECT *,
-  json_build_object('id', answers.answer_id, 'body', answer_body, 'date', answer_date,
-  'answerer_name', answerer_name, 'helpfulness', answer_helpfulness,
-  'reported', answer_reported, 'photos', answer_photos.photo_url) as answer
-  from questions
-  inner join answers on answers.question_id = questions.question_id
-  full outer join answer_photos on answer_photos.answer_id = answers.answer_id
-  WHERE product_id = ${productId}`)
+    json_build_object('id', answers.answer_id, 'body', answer_body, 'date', answer_date,
+    'answerer_name', answerer_name, 'helpfulness', answer_helpfulness,
+    'reported', answer_reported, 'photos', answer_photos.photo_url) as answer
+    from questions
+    full outer join answers on answers.question_id = questions.question_id
+    full outer join answer_photos on answer_photos.answer_id = answers.answer_id
+    WHERE product_id = ${productId};`)
   .then((questionResponse) => {
     const formattedRes = {};
     formattedRes.product_id = productId;
@@ -97,7 +97,7 @@ const addAnswer = (questionId, body, name, email, photoArr) => {
 
   return db.query(`INSERT INTO answers (question_id, answer_body, answer_date, answerer_name, answerer_email) 
         VALUES (${questionId}, '${body}', ${formattedTime}, '${name}', '${email}');`)
-    .then(() => db.query('SELECT MAX(id) FROM answers'))
+    .then(() => db.query('SELECT MAX(answer_id) FROM answers'))
     .then((data) => {
       const ansId = Number.parseInt(data.rows[0].max);
       if (photoArr) {
@@ -110,19 +110,19 @@ const addAnswer = (questionId, body, name, email, photoArr) => {
     .catch((err) => console.log(err));
 };
 
-const markQuestionHelpful = (id) => db.query(`UPDATE questions SET question_helpfulness = question_helpfulness + 1 WHERE id = ${id};`)
+const markQuestionHelpful = (id) => db.query(`UPDATE questions SET question_helpfulness = question_helpfulness + 1 WHERE question_id = ${id};`)
   .then((response) => response)
   .catch((err) => console.log(err));
 
-const markAnswerHelpful = (id) => db.query(`UPDATE answers SET answer_helpfulness = answer_helpfulness + 1 WHERE id = ${id};`)
+const markAnswerHelpful = (id) => db.query(`UPDATE answers SET answer_helpfulness = answer_helpfulness + 1 WHERE answer_id = ${id};`)
   .then((response) => response)
   .catch((err) => console.log(err));
 
-const reportQuestion = (id) => db.query(`UPDATE questions SET question_reported = false WHERE id = ${id};`)
+const reportQuestion = (id) => db.query(`UPDATE questions SET question_reported = true WHERE question_id = ${id};`)
   .then((response) => response)
   .catch((err) => console.log(err));
 
-const reportAnswer = (id) => db.query(`UPDATE answers SET answer_reported = false WHERE id = ${id};`)
+const reportAnswer = (id) => db.query(`UPDATE answers SET answer_reported = true WHERE answer_id = ${id};`)
   .then((response) => response)
   .catch((err) => console.log(err));
 
