@@ -1,57 +1,54 @@
+/* eslint-disable no-console */
+/* eslint-disable radix */
+/* eslint-disable no-plusplus */
 const csvtojson = require('csvtojson');
 const { MongoClient } = require('mongodb');
 
-var dbConn;
+let dbConn;
 const connectionURL = 'mongodb://localhost:27017/questionanswer';
-MongoClient.connect(connectionURL, {useUnifiedTopology: true})
-    .then(client => {
-        console.log('DB Connected!')
-        dbConn = client.db();
-    })
-    .catch(err => console.log(`DB connection error ${err.message}`));
+MongoClient.connect(connectionURL, { useUnifiedTopology: true })
+  .then((client) => {
+    console.log('DB Connected!');
+    dbConn = client.db();
+  })
+  .catch((err) => console.log(`DB connection error ${err.message}`));
 
-
-const csvFilePathQuestions = "/Users/ctunakan/SDC/questions.csv";
-const csvFilePathAnswers = "/Users/ctunakan/SDC/answers.csv";
-const csvFilePathPhotos = "/Users/ctunakan/SDC/answers_photos.csv";
+const csvFilePathQuestions = '/Users/ctunakan/SDC/questions.csv';
+// const csvFilePathAnswers = '/Users/ctunakan/SDC/answers.csv';
+// const csvFilePathPhotos = '/Users/ctunakan/SDC/answers_photos.csv';
 
 const questionArrInsert = [];
 
 csvtojson()
-    .fromFile(csvFilePathQuestions)
-    .then(source => {
-        for (let i = 0; i < source.length; i++) {
-            let singleRow = {
-                _id: source[i].id,
-                questionId: Number.parseInt(source[i].id),
-                productId: Number.parseInt(source[i]['product_id']),
-                questionBody: source[i].body,
-                questionDate:Number.parseInt(source[i]['date_written']),
-                askerName: source[i]['asker_name'],
-                askerEmail: source[i]['asker_email'],
-                questionReported: Number.parseInt(source[i].reported),
-                questionHelpfulness: Number.parseInt(source[i].helpful )  
-            }; 
-            questionArrInsert.push(singleRow);
-        }
+  .fromFile(csvFilePathQuestions)
+  .then((source) => {
+    for (let i = 0; i < source.length; i++) {
+      const singleRow = {
+        _id: source[i].id,
+        questionId: Number.parseInt(source[i].id),
+        productId: Number.parseInt(source[i].product_id),
+        questionBody: source[i].body,
+        questionDate: Number.parseInt(source[i].date_written),
+        askerName: source[i].asker_name,
+        askerEmail: source[i].asker_email,
+        questionReported: Number.parseInt(source[i].reported),
+        questionHelpfulness: Number.parseInt(source[i].helpful),
+      };
+      questionArrInsert.push(singleRow);
+    }
 
-        console.log('finished compiling arr');
-        const collectionName = 'questions';
-        const collection = dbConn.collection(collectionName);
-        collection.insertMany(questionArrInsert, (err, result)=> {
-            if (err) {
-                console.log(err)
-            }
-            if (result) {
-                console.log('questions csv imported successfully')
-            }  
-        });
-       
-        // return questionArrInsert;
+    console.log('finished compiling arr');
+    const collectionName = 'questions';
+    const collection = dbConn.collection(collectionName);
+    collection.insertMany(questionArrInsert, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      if (result) {
+        console.log('questions csv imported successfully');
+      }
     });
-
-
-
+  });
 
 // const mongoose = require('mongoose');
 // mongoose.connect('mongodb://localhost:27017/questionanswer');
@@ -87,7 +84,6 @@ csvtojson()
 //     answerHelpfulness: Number
 // });
 
-
 // let Questions = mongoose.model('questions', questionSchema);
 // let Answers = mongoose.model('answers', answerSchema);
 // let Photos = mongoose.model('answer_photos', photoSchema);
@@ -95,7 +91,6 @@ csvtojson()
 // const csvFilePathQuestions = "/Users/ctunakan/SDC/questions.csv";
 // const csvFilePathAnswers = "/Users/ctunakan/SDC/answers.csv";
 // const csvFilePathPhotos = "/Users/ctunakan/SDC/answers_photos.csv";
-
 
 // csvtojson()
 //     .fromFile(csvFilePathQuestions)
@@ -110,8 +105,8 @@ csvtojson()
 //                 askerName: source[i]['asker_name'],
 //                 askerEmail: source[i]['asker_email'],
 //                 questionReported: Number.parseInt(source[i].reported),
-//                 questionHelpfulness: Number.parseInt(source[i].helpful )  
-//             }; 
+//                 questionHelpfulness: Number.parseInt(source[i].helpful)
+//             };
 
 //             // console.log(singleRow)
 //             Questions.create(singleRow)
@@ -151,11 +146,11 @@ csvtojson()
 //                 answererName: source[i]['answerer_name'],
 //                 answererEmail: source[i]['answerer_email'],
 //                 answerReported: Number.parseInt(source[i].reported),
-//                 answerHelpfulness: Number.parseInt(source[i].helpful )  
-//             }; 
+//                 answerHelpfulness: Number.parseInt(source[i].helpful )
+//             };
 
 //             // console.log(singleRow)
 //             Answers.create(singleRow)
 //                 .then(result => console.log('answers added'))
 //         }
-//     })
+//     });
