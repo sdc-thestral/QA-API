@@ -2,9 +2,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 require('dotenv').config();
 const express = require('express');
-// const path = require('path');
 const cors = require('cors');
-// const db = require('./db');
 const logger = require('./logger');
 const dbQuery = require('./dbFiles/dbRoutes');
 
@@ -47,9 +45,9 @@ app.get('/qa/questions/:question_id/answers', (req, res) => {
 // add question
 app.post('/qa/questions', (req, res) => {
   const productId = Number.parseInt(req.body.product_id);
-  const body = req.body.question_body;
-  const name = req.body.asker_name;
-  const email = req.body.asker_email;
+  const { body } = req.body;
+  const { name } = req.body;
+  const { email } = req.body;
 
   dbQuery.addQuestion(productId, body, name, email)
     .then(() => res.send('question added!'));
@@ -57,11 +55,11 @@ app.post('/qa/questions', (req, res) => {
 
 // add answer
 app.post('/qa/questions/:question_id/answers', (req, res) => {
-  const questionId = req.body.question_id;
-  const body = req.body.answer_body;
-  const name = req.body.answerer_name;
-  const email = req.body.answerer_email;
-  const { photoArr } = req.body;
+  const questionId = req.query.question_id;
+  const { body } = req.body;
+  const { name } = req.body;
+  const { email } = req.body;
+  const photoArr = req.body.photos;
 
   dbQuery.addAnswer(questionId, body, name, email, photoArr)
     .then(() => res.send('answer added!'));
