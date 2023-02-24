@@ -6,7 +6,7 @@ const db = new Pool({
   user: process.env.PGUSER,
   host: process.env.PGHOST,
   databasGe: process.env.PGDATABSE,
-  password: process.env.PGPASSWORD,
+  // password: process.env.PGPASSWORD,
   port: process.env.PGPORT,
 });
 
