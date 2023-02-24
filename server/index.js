@@ -14,13 +14,11 @@ app.use(express.json());
 
 // get questions
 app.get('/qa/questions', (req, res) => {
-  console.time('Execution Time Get Questions');
   const productId = Number.parseInt(req.query.product_id);
   const count = req.query.count ? req.query.count : null;
 
   dbQuery.getAllQuestions(productId, count)
-    .then((data) => res.send(data))
-    .then(() => console.timeEnd('Execution Time Get Questions'));
+    .then((data) => res.send(data));
 });
 
 app.get('/qa/answers/:answer_id/photos', (req, res) => {
@@ -32,14 +30,10 @@ app.get('/qa/answers/:answer_id/photos', (req, res) => {
 
 // get answers
 app.get('/qa/questions/:question_id/answers', (req, res) => {
-  console.time('Execution Time Get Answers');
   const questionId = Number.parseInt(req.params.question_id);
 
   dbQuery.getAllAnswers(questionId)
-    .then((data) => {
-      res.send(data);
-    })
-    .then(() => console.timeEnd('Execution Time Get Answers'));
+    .then((data) => res.send(data));
 });
 
 // add question
@@ -55,7 +49,7 @@ app.post('/qa/questions', (req, res) => {
 
 // add answer
 app.post('/qa/questions/:question_id/answers', (req, res) => {
-  const questionId = req.query.question_id;
+  const questionId = req.params.question_id;
   const { body } = req.body;
   const { name } = req.body;
   const { email } = req.body;
@@ -67,7 +61,7 @@ app.post('/qa/questions/:question_id/answers', (req, res) => {
 
 // mark question helpful
 app.put('/qa/questions/:question_id/helpful', (req, res) => {
-  const questionId = req.params.question_id;
+  const questionId = Number.parseInt(req.params.question_id);
 
   dbQuery.markQuestionHelpful(questionId)
     .then(() => res.send('question marked helpful!'));
@@ -83,7 +77,7 @@ app.put('/qa/answers/:answer_id/helpful', (req, res) => {
 
 // reports question
 app.put('/qa/questions/:question_id/report', (req, res) => {
-  const questionId = req.params.question_id;
+  const questionId = Number.parseInt(req.params.question_id);
 
   dbQuery.reportQuestion(questionId)
     .then(() => res.send('question reported!'));
@@ -91,9 +85,9 @@ app.put('/qa/questions/:question_id/report', (req, res) => {
 
 // reports answer
 app.put('/qa/answers/:answer_id/report', (req, res) => {
-  const questionId = req.params.question_id;
+  const answerId = Number.parseInt(req.params.answer_id);
 
-  dbQuery.reportAnswer(questionId)
+  dbQuery.reportAnswer(answerId)
     .then(() => res.send('answer reported!'));
 });
 
